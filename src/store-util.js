@@ -30,9 +30,9 @@ export function resetStore (store, hot) {
 export function resetStoreState (store, state, hot) {
   const oldState = store._state
 
-  // bind store public getters
+  // ? 绑定公开 getters
   store.getters = {}
-  // reset local getters cache
+  // ? reset local getters cache
   store._makeLocalGettersCache = Object.create(null)
   const wrappedGetters = store._wrappedGetters
   const computedObj = {}
@@ -48,7 +48,7 @@ export function resetStoreState (store, state, hot) {
       enumerable: true // for local getters
     })
   })
-
+  // ?  reactive 函数为创建 proxy
   store._state = reactive({
     data: state
   })
@@ -84,7 +84,7 @@ export function installModule (store, rootState, path, module, hot) {
     store._modulesNamespaceMap[namespace] = module
   }
 
-  // set state
+  // ? 设置 state
   if (!isRoot && !hot) {
     const parentState = getNestedState(rootState, path.slice(0, -1))
     const moduleName = path[path.length - 1]
@@ -96,10 +96,11 @@ export function installModule (store, rootState, path, module, hot) {
           )
         }
       }
+      // * 例如：state.cart = state
       parentState[moduleName] = module.state
     })
   }
-
+  // ?注册 mutation、action、getter
   const local = module.context = makeLocalContext(store, namespace, path)
 
   module.forEachMutation((mutation, key) => {
@@ -204,7 +205,7 @@ export function makeLocalGetters (store, namespace) {
 
   return store._makeLocalGettersCache[namespace]
 }
-// 注册 modlue
+// !注册 modlue
 function registerMutation (store, type, handler, local) {
   const entry = store._mutations[type] || (store._mutations[type] = [])
   entry.push(function wrappedMutationHandler (payload) {
@@ -212,7 +213,7 @@ function registerMutation (store, type, handler, local) {
   })
 }
 
-function registerAction (store, type, handler, local) {
+function registerAction (store, type, hand1ler, local) {
   const entry = store._actions[type] || (store._actions[type] = [])
   entry.push(function wrappedActionHandler (payload) {
     let res = handler.call(store, {
